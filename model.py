@@ -46,7 +46,7 @@ def generate_samples(batch_size):
 
         camera = 'center'
         
-        if upper_bound > 3:
+        if upper_bound < n_bin:
             camera_selection = np.random.randint(3)
             if camera_selection == 1:
                 camera = 'left'
