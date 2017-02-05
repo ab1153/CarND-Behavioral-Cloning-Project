@@ -6,4 +6,4 @@
 # jupyter notebook
 .ipynb_checkpoints
 /kernel-*.json
-/MACOSX/
+/__MACOSX/

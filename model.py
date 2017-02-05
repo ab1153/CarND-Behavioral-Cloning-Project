@@ -13,15 +13,9 @@ import os
 model_name = 'model'
 data_path = './data/'
 df = pd.read_csv(data_path + 'driving_log.csv')
-<<<<<<< HEAD
 batch_size = 64
 samples_epoch = batch_size * 300
 n_epochs = 20
-=======
-batch_size = 32
-samples_epoch = batch_size * 250
-n_epochs = 10
->>>>>>> 1103c3d7deda58596f6a86972dafa12088c4d427
 
 
 def generate_samples(batch_size):
@@ -86,7 +80,6 @@ def pred_steering():
 
     lambda0 = Lambda( lambda x: x/127.5 - 1., input_shape=(160,320,3) )
     model.add(lambda0)
-<<<<<<< HEAD
     
     model.add(Convolution2D(16,4,4,border_mode='same',subsample=(4,4)))
     model.add(Activation('relu')) # output (40, 80)
@@ -94,18 +87,6 @@ def pred_steering():
     model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=(2, 2))) # output (20, 40)
     
-=======
-    model.add(Convolution2D(8,4,4,border_mode='same',subsample=(4,4)))
-    model.add(Activation('relu')) # output (8, 40, 80)
-    model.add(Convolution2D(16,3,3,border_mode='same'))
-    model.add(Activation('relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2))) # output (16, 20, 40)
-
-    model.add(Convolution2D(32,2,2,border_mode='same'))
-    model.add(Activation('relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2))) # output (32, 10, 20)
-
->>>>>>> 1103c3d7deda58596f6a86972dafa12088c4d427
     model.add(Convolution2D(64,2,2,border_mode='same'))
     model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=(2, 2))) # output (10, 20)
@@ -113,7 +94,6 @@ def pred_steering():
     model.add(Convolution2D(128,2,2,border_mode='same'))
     model.add(Activation('relu'))
     model.add(Dropout(0.5))
-<<<<<<< HEAD
     model.add(MaxPooling2D(pool_size=(2, 2))) # output (5, 10)
 
     model.add(Convolution2D(256,2,2,border_mode='same'))
@@ -127,21 +107,6 @@ def pred_steering():
     model.add(Dropout(0.5))
 
     model.add(Dense(256))
-=======
-    model.add(MaxPooling2D(pool_size=(2, 2))) # output (64, 5, 10)
-
-    model.add(Convolution2D(128,2,2,border_mode='same'))
-    model.add(Activation('relu'))
-    model.add(Dropout(0.5))
-    model.add(MaxPooling2D(pool_size=(2, 2), border_mode='same')) # output (128, 3, 5)
-    
-    model.add(Flatten())
-    model.add(Dense(256))
-    model.add(Activation('relu'))
-    model.add(Dropout(0.5))
-
-    model.add(Dense(128))
->>>>>>> 1103c3d7deda58596f6a86972dafa12088c4d427
     model.add(Dense(1))
 
     model.compile(optimizer=Adam(lr=1e-4), loss='mse')
