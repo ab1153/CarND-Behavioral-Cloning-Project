@@ -13,9 +13,9 @@ import os
 model_name = 'model'
 data_path = './data/'
 df = pd.read_csv(data_path + 'driving_log.csv')
-batch_size = 32
+batch_size = 64
 samples_epoch = batch_size * 500
-n_epochs = 10
+n_epochs = 15
 
 
 def generate_samples(batch_size):
@@ -23,7 +23,7 @@ def generate_samples(batch_size):
     size = df.steering.size
     offset = 0.15
 
-    n_bin = 4
+    n_bin = 5
     
     for i in range(0, size - batch_size):
         samples = df.ix[range(i, i + batch_size), range(n_bin + 1)]
@@ -36,7 +36,7 @@ def generate_samples(batch_size):
 
     while True:
         # choose a bin
-        upper_bound = np.random.choice(np.arange(1,n_bin + 1), p=[0.1,0.1,0.1,0.7])
+        upper_bound = np.random.choice(np.arange(1,n_bin + 1), p=[0.05,0.05, 0.1, 0.3, 0.5])
         indices = df.iloc[bin_inds == upper_bound].index
         # choose a sequence from the bin
         index_begin = np.random.choice(indices)
@@ -45,7 +45,8 @@ def generate_samples(batch_size):
         steerings = np.zeros(0)
 
         camera = 'center'
-        if upper_bound == n_bin:
+        
+        if upper_bound > 3:
             camera_selection = np.random.randint(3)
             if camera_selection == 1:
                 camera = 'left'
@@ -82,22 +83,22 @@ def pred_steering():
     model.add(lambda0)
     
     model.add(Convolution2D(16,8,8,border_mode='same',subsample=(2,2)))
-    model.add(Activation('relu')) # output (80, 160)
+    model.add(Activation('elu')) # output (80, 160)
     model.add(Convolution2D(32,5,5,border_mode='same'))
-    model.add(Activation('relu'))
+    model.add(Activation('elu'))
     model.add(MaxPooling2D(pool_size=(2, 2))) # output (40, 80)
     
     model.add(Convolution2D(64,5,5,border_mode='same'))
-    model.add(Activation('relu'))
+    model.add(Activation('elu'))
     model.add(MaxPooling2D(pool_size=(2, 2))) # output (20, 40)
     
-    model.add(Convolution2D(64,3,3,border_mode='same'))
-    model.add(Activation('relu'))
+    model.add(Convolution2D(128,5,5,border_mode='same'))
+    model.add(Activation('elu'))
     model.add(Dropout(0.5))
     model.add(MaxPooling2D(pool_size=(2, 2))) # output (10, 20)
 
     model.add(Convolution2D(64,3,3,border_mode='same'))
-    model.add(Activation('relu'))
+    model.add(Activation('elu'))
     model.add(Dropout(0.5))
     model.add(MaxPooling2D(pool_size=(2, 2))) # output (5, 10)
 
