@@ -14,20 +14,19 @@ model_name = 'model'
 data_path = './data/'
 df = pd.read_csv(data_path + 'driving_log.csv')
 batch_size = 64
-samples_epoch = batch_size * 500
-n_epochs = 15
-
+samples_epoch = batch_size * 80
+n_epochs = 10
 
 def generate_samples(batch_size):
     means = np.zeros(0)
-    size = df.steering.size
+    size = df.iloc[:,3].size
     offset = 0.15
 
     n_bin = 5
     
     for i in range(0, size - batch_size):
         samples = df.ix[range(i, i + batch_size), range(n_bin + 1)]
-        mean = np.absolute( samples.steering ).mean()
+        mean = np.absolute( samples.iloc[:,3] ).mean()
         means = np.append(means, [mean])
 
     bins = np.linspace(means.min(), means.max(), num=8)
@@ -44,27 +43,25 @@ def generate_samples(batch_size):
         imgs = np.zeros([0, 160, 320, 3], dtype='uint8')
         steerings = np.zeros(0)
 
-        camera = 'center'
+        camera = 0
         
         if upper_bound < n_bin:
-            camera_selection = np.random.randint(3)
-            if camera_selection == 1:
-                camera = 'left'
-            elif camera_selection == 2:
-                camera = 'right'
+            camera = np.random.randint(3)
 
         flip = np.random.randint(2)
 
         for i in range(batch_size):
-            file_path = df[camera][index_begin + i]
-            file_path = file_path.strip()
             
-            img = plt.imread(data_path + file_path)
+            file_path = df.iloc[index_begin + i, camera]
+            _, _, filename = file_path.partition('IMG\\')
+
+            img = plt.imread(data_path + 'IMG/' + filename)
             
-            steering = df.steering[index_begin + i]
-            if camera == 'left':
+            steering = df.iloc[index_begin + i, 3]
+
+            if camera == 1:
                 steering += offset
-            elif camera == 'right':
+            elif camera == 2:
                 steering -= offset
 
             if flip:
