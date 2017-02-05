@@ -14,8 +14,8 @@ model_name = 'model'
 data_path = './data/'
 df = pd.read_csv(data_path + 'driving_log.csv')
 batch_size = 32
-samples_epoch = batch_size * 250
-n_epochs = 10
+samples_epoch = batch_size * 500
+n_epochs = 30
 
 
 def generate_samples(batch_size):
