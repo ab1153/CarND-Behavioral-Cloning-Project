@@ -51,7 +51,7 @@ def generate_samples(batch_size):
                 camera = 'right'
 
         flip = np.random.randint(2)
-        print('upper_bound: {}, camera: {}, flip: {}'.format(upper_bound, camera, flip))
+
         for i in range(batch_size):
             file_path = df[camera][index_begin + i]
             file_path = file_path.strip()
