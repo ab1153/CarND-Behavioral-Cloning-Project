@@ -14,15 +14,15 @@ model_name = 'model'
 data_path = './data/'
 df = pd.read_csv(data_path + 'driving_log.csv')
 batch_size = 32
-samples_epoch = batch_size * 150
+samples_epoch = batch_size * 200
 n_epochs = 10
 
 def generate_samples(batch_size):
     means = np.zeros(0)
     size = df.iloc[:,3].size
-    offset = 0.15
+    offset = 0.125
 
-    n_bin = 5
+    n_bin = 4
     
     for i in range(0, size - batch_size):
         samples = df.ix[range(i, i + batch_size), range(n_bin + 1)]
@@ -35,7 +35,7 @@ def generate_samples(batch_size):
 
     while True:
         # choose a bin
-        upper_bound = np.random.choice(np.arange(1,n_bin + 1), p=[0.05,0.05, 0.1, 0.3, 0.5])
+        upper_bound = np.random.choice(np.arange(1,n_bin + 1), p=[0.1,0.2,0.3,0.4])
         indices = df.iloc[bin_inds == upper_bound].index
         # choose a sequence from the bin
         index_begin = np.random.choice(indices)
