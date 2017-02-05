@@ -45,7 +45,7 @@ def generate_samples(batch_size):
 
         camera = 0
         
-        if upper_bound > 0 :
+        if upper_bound < n_bin :
             camera = np.random.randint(3)
 
         flip = np.random.randint(2)
