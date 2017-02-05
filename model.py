@@ -45,7 +45,7 @@ def generate_samples(batch_size):
 
         camera = 0
         
-        if upper_bound > 3 :
+        if upper_bound > 0 :
             camera = np.random.randint(3)
 
         flip = np.random.randint(2)
@@ -79,23 +79,21 @@ def pred_steering():
     lambda0 = Lambda( lambda x: x/127.5 - 1., input_shape=(160,320,3) )
     model.add(lambda0)
     
-    model.add(Convolution2D(16,4,4,border_mode='same',subsample=(2,2)))
+    model.add(Convolution2D(16,8,8,border_mode='same',subsample=(2,2)))
     model.add(Activation('relu')) # output (80, 160)
-    model.add(Convolution2D(32,5,5,border_mode='same'))
+    model.add(Convolution2D(16,5,5,border_mode='same'))
     model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=(2, 2))) # output (40, 80)
     
-    model.add(Convolution2D(64,5,5,border_mode='same'))
+    model.add(Convolution2D(32,5,5,border_mode='same'))
     model.add(Activation('relu'))
-    model.add(Dropout(0.5))
     model.add(MaxPooling2D(pool_size=(2, 2))) # output (20, 40)
     
-    model.add(Convolution2D(128,5,5,border_mode='same'))
+    model.add(Convolution2D(64,5,5,border_mode='same'))
     model.add(Activation('relu'))
-    model.add(Dropout(0.5))
     model.add(MaxPooling2D(pool_size=(2, 2))) # output (10, 20)
 
-    model.add(Convolution2D(256,5,5,border_mode='same'))
+    model.add(Convolution2D(128,5,5,border_mode='same'))
     model.add(Activation('relu'))
     model.add(Dropout(0.5))
     model.add(MaxPooling2D(pool_size=(2, 2))) # output (5, 10)
@@ -106,9 +104,12 @@ def pred_steering():
     model.add(Activation('relu'))
     model.add(Dropout(0.5))
 
-    model.add(Dense(256))
+    model.add(Dense(512))
     model.add(Activation('relu'))
     model.add(Dropout(0.5))
+
+    
+    model.add(Dense(256))
     
     model.add(Dense(1))
 
