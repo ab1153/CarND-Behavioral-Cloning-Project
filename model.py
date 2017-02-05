@@ -14,7 +14,7 @@ model_name = 'model'
 data_path = './data/'
 df = pd.read_csv(data_path + 'driving_log.csv')
 batch_size = 64
-samples_epoch = batch_size * 80
+samples_epoch = batch_size * 200
 n_epochs = 10
 
 def generate_samples(batch_size):
@@ -108,7 +108,7 @@ def pred_steering():
     model.add(Dense(256))
     model.add(Dense(1))
 
-    model.compile(optimizer=Adam(lr=1e-4), loss='mse')
+    model.compile(optimizer=Adam(lr=1e-5), loss='mse')
     return model
 
 
