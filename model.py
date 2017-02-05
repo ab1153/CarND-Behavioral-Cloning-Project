@@ -83,17 +83,27 @@ def pred_steering():
     model.add(Convolution2D(16,3,3,border_mode='same'))
     model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=(2, 2))) # output (16, 20, 40)
+
     model.add(Convolution2D(32,2,2,border_mode='same'))
     model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=(2, 2))) # output (32, 10, 20)
+
     model.add(Convolution2D(64,2,2,border_mode='same'))
     model.add(Activation('relu'))
     model.add(Dropout(0.5))
     model.add(MaxPooling2D(pool_size=(2, 2))) # output (64, 5, 10)
-    model.add(Flatten())
-    model.add(Dense(128))
+
+    model.add(Convolution2D(128,2,2,border_mode='same'))
     model.add(Activation('relu'))
     model.add(Dropout(0.5))
+    model.add(MaxPooling2D(pool_size=(2, 2), border_mode='same')) # output (128, 3, 5)
+    
+    model.add(Flatten())
+    model.add(Dense(256))
+    model.add(Activation('relu'))
+    model.add(Dropout(0.5))
+
+    model.add(Dense(128))
     model.add(Dense(1))
 
     model.compile(optimizer=Adam(lr=1e-4), loss='mse')
