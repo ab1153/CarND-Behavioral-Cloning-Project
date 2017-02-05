@@ -13,8 +13,8 @@ import os
 model_name = 'model'
 data_path = './data/'
 df = pd.read_csv(data_path + 'driving_log.csv')
-batch_size = 64
-samples_epoch = batch_size * 100
+batch_size = 32
+samples_epoch = batch_size * 150
 n_epochs = 10
 
 def generate_samples(batch_size):
@@ -81,8 +81,6 @@ def pred_steering():
     
     model.add(Convolution2D(16,8,8,border_mode='same',subsample=(2,2)))
     model.add(Activation('relu')) # output (80, 160)
-    model.add(Convolution2D(16,5,5,border_mode='same'))
-    model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=(2, 2))) # output (40, 80)
     
     model.add(Convolution2D(32,5,5,border_mode='same'))
@@ -93,10 +91,10 @@ def pred_steering():
     model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=(2, 2))) # output (10, 20)
 
-    model.add(Convolution2D(128,5,5,border_mode='same'))
-    model.add(Activation('relu'))
-    model.add(Dropout(0.5))
-    model.add(MaxPooling2D(pool_size=(2, 2))) # output (5, 10)
+#    model.add(Convolution2D(128,5,5,border_mode='same'))
+#    model.add(Activation('relu'))
+#    model.add(Dropout(0.5))
+#    model.add(MaxPooling2D(pool_size=(2, 2))) # output (5, 10)
 
     model.add(Flatten())
 
