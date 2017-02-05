@@ -34,7 +34,7 @@ def generate_samples(batch_size):
 
     while True:
         # choose a bin of 3
-        upper_bound = np.random.choice(np.arange(1,4))
+        upper_bound = np.random.choice(np.arange(1,4), p=[0.2,0.2,0.6])
         indices = df.iloc[bin_inds == upper_bound].index
         # choose a sequence from the bin
         index_begin = np.random.choice(indices)
