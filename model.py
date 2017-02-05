@@ -13,9 +13,9 @@ import os
 model_name = 'model'
 data_path = './data/'
 df = pd.read_csv(data_path + 'driving_log.csv')
-batch_size = 32
-samples_epoch = batch_size * 500
-n_epochs = 30
+batch_size = 64
+samples_epoch = batch_size * 300
+n_epochs = 20
 
 
 def generate_samples(batch_size):
@@ -23,18 +23,20 @@ def generate_samples(batch_size):
     size = df.steering.size
     offset = 0.125
 
+    n_bin = 5
+    
     for i in range(0, size - batch_size):
-        samples = df.ix[range(i, i + batch_size), range(4)]
+        samples = df.ix[range(i, i + batch_size), range(n_bin + 1)]
         mean = np.absolute( samples.steering ).mean()
         means = np.append(means, [mean])
 
-    bins = np.linspace(means.min(), means.max(), num=4)
+    bins = np.linspace(means.min(), means.max(), num=8)
     bin_inds = np.digitize(means, bins, right= True)
     bin_inds = np.append(bin_inds, np.zeros(df.shape[0] - bin_inds.size))
 
     while True:
-        # choose a bin of 3
-        upper_bound = np.random.choice(np.arange(1,4), p=[0.2,0.2,0.6])
+        # choose a bin
+        upper_bound = np.random.choice(np.arange(1,n_bin + 1), p=[0.1,0.1,0.15,0.15,0.5])
         indices = df.iloc[bin_inds == upper_bound].index
         # choose a sequence from the bin
         index_begin = np.random.choice(indices)
@@ -43,7 +45,7 @@ def generate_samples(batch_size):
         steerings = np.zeros(0)
 
         camera = 'center'
-        if upper_bound == 3:
+        if upper_bound == n_bin:
             camera_selection = np.random.randint(3)
             if camera_selection == 1:
                 camera = 'left'
@@ -78,22 +80,33 @@ def pred_steering():
 
     lambda0 = Lambda( lambda x: x/127.5 - 1., input_shape=(160,320,3) )
     model.add(lambda0)
-    model.add(Convolution2D(8,4,4,border_mode='same',subsample=(4,4)))
-    model.add(Activation('relu')) # output (8, 40, 80)
-    model.add(Convolution2D(16,3,3,border_mode='same'))
+    
+    model.add(Convolution2D(16,4,4,border_mode='same',subsample=(4,4)))
+    model.add(Activation('relu')) # output (40, 80)
+    model.add(Convolution2D(32,3,3,border_mode='same'))
     model.add(Activation('relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2))) # output (16, 20, 40)
-    model.add(Convolution2D(32,2,2,border_mode='same'))
-    model.add(Activation('relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2))) # output (32, 10, 20)
+    model.add(MaxPooling2D(pool_size=(2, 2))) # output (20, 40)
+    
     model.add(Convolution2D(64,2,2,border_mode='same'))
     model.add(Activation('relu'))
-    model.add(Dropout(0.5))
-    model.add(MaxPooling2D(pool_size=(2, 2))) # output (64, 5, 10)
-    model.add(Flatten())
-    model.add(Dense(128))
+    model.add(MaxPooling2D(pool_size=(2, 2))) # output (10, 20)
+    
+    model.add(Convolution2D(128,2,2,border_mode='same'))
     model.add(Activation('relu'))
     model.add(Dropout(0.5))
+    model.add(MaxPooling2D(pool_size=(2, 2))) # output (5, 10)
+
+    model.add(Convolution2D(256,2,2,border_mode='same'))
+    model.add(Activation('relu'))
+    model.add(Dropout(0.5))
+    model.add(MaxPooling2D(pool_size=(2, 2), border_mode='same')) # output (3, 5)
+    
+    model.add(Flatten())
+    model.add(Dense(512))
+    model.add(Activation('relu'))
+    model.add(Dropout(0.5))
+
+    model.add(Dense(256))
     model.add(Dense(1))
 
     model.compile(optimizer=Adam(lr=1e-4), loss='mse')
