@@ -45,13 +45,13 @@ def generate_samples(batch_size):
 
         camera = 0
         
-        if upper_bound < n_bin:
+        if upper_bound > 3 :
             camera = np.random.randint(3)
 
         flip = np.random.randint(2)
 
         for i in range(batch_size):
-            
+
             file_path = df.iloc[index_begin + i, camera]
             _, _, filename = file_path.partition('IMG\\')
 
