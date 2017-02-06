@@ -13,8 +13,8 @@ import os
 model_name = 'model'
 data_path = './data/'
 df = pd.read_csv(data_path + 'driving_log.csv')
-batch_size = 32
-samples_epoch = batch_size * 250
+batch_size = 64
+samples_epoch = batch_size * 200
 n_epochs = 10
 
 def generate_samples(batch_size):
@@ -83,19 +83,20 @@ def pred_steering():
     model.add(Activation('relu')) # output (80, 160)
     model.add(MaxPooling2D(pool_size=(2, 2))) # output (40, 80)
     
-    model.add(Convolution2D(16,5,5,border_mode='same',subsample=(1,1)))
+    model.add(Convolution2D(32,5,5,border_mode='same',subsample=(1,1)))
     model.add(Activation('relu')) # output (80, 160)
     model.add(MaxPooling2D(pool_size=(2, 2))) # output (40, 80)
     
-    model.add(Convolution2D(32,3,3,border_mode='same'))
+    model.add(Convolution2D(64,3,3,border_mode='same'))
     model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=(2, 2))) # output (20, 40)
     
-    model.add(Convolution2D(64,3,3,border_mode='same'))
+    model.add(Convolution2D(80,3,3,border_mode='same'))
     model.add(Activation('relu'))
+    model.add(Dropout(0.5))
     model.add(MaxPooling2D(pool_size=(2, 2))) # output (10, 20)
 
-    model.add(Convolution2D(128,3,3,border_mode='same'))
+    model.add(Convolution2D(100,3,3,border_mode='same'))
     model.add(Activation('relu'))
     model.add(Dropout(0.5))
     model.add(MaxPooling2D(pool_size=(2, 2))) # output (5, 10)
@@ -104,11 +105,8 @@ def pred_steering():
 
     model.add(Dense(1024))
     model.add(Activation('relu'))
-    model.add(Dropout(0.5))
 
-    
-    model.add(Dense(512))
-    
+    model.add(Dense(256))
     model.add(Dense(1))
 
     model.compile(optimizer=Adam(lr=1e-4), loss='mse')
