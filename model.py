@@ -16,7 +16,7 @@ data_path = './data/'
 df = pd.read_csv(data_path + 'driving_log.csv')
 batch_size = 64
 samples_epoch = batch_size * 200
-n_epochs = 5
+n_epochs = 50
 
 def generate_samples(df, batch_size, data_path):
     
@@ -77,7 +77,7 @@ def generate_samples(df, batch_size, data_path):
         yield imgs, steerings
 
 
-def pred_steering(name='model'):
+def pred_steering():
     model = Sequential()
 
     lambda0 = Lambda( lambda x: x/127.5 - 1.0, input_shape=(80,160,1) )
@@ -119,11 +119,6 @@ def pred_steering(name='model'):
     
     model.add(Dense(1))
 
-    model_weights_file = name + '.h5'
-
-    if os.path.exists(model_weights_file):
-        model.load_weights(model_weights_file)
-
     model.compile(optimizer=Adam(lr=1e-4), loss='mse')
     return model
 
@@ -152,7 +147,7 @@ weight_save_callback = ModelCheckpoint('./weights.{epoch:02d}-{val_loss:.2f}.hdf
 
 
 def main():
-    model = pred_steering(model_name)
+    model = pred_steering()
     history = model.fit_generator(generate_samples(df, batch_size, data_path),
         samples_per_epoch=samples_epoch,
         nb_epoch=n_epochs,
