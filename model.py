@@ -16,7 +16,7 @@ data_path = './data/'
 df = pd.read_csv(data_path + 'driving_log.csv')
 batch_size = 64
 samples_epoch = batch_size * 200
-n_epochs = 25
+n_epochs = 50
 
 def generate_samples(df, batch_size, data_path):
     
@@ -83,30 +83,30 @@ def pred_steering():
     lambda0 = Lambda( lambda x: x/127.5 - 1.0, input_shape=(80,160,1) )
     model.add(lambda0)
     
-    model.add(Convolution2D(8,3,5,border_mode='valid',subsample=(1,2)))
+    model.add(Convolution2D(16,3,5,border_mode='valid',subsample=(1,2)))
     model.add(Activation('elu'))  #out (78, 78)
 
-    model.add(Convolution2D(8,3,3,border_mode='valid'))
+    model.add(Convolution2D(16,3,3,border_mode='valid'))
     model.add(Activation('elu'))  #out (76, 76)
     model.add(MaxPooling2D(pool_size=(2, 2))) # out (38, 38)
     
-    model.add(Convolution2D(12,3,3,border_mode='valid'))
+    model.add(Convolution2D(24,3,3,border_mode='valid'))
     model.add(Activation('elu'))  # out (36,36)
     model.add(MaxPooling2D(pool_size=(2, 2))) # out (18, 18)
     
-    model.add(Convolution2D(16,3,3,border_mode='valid'))
+    model.add(Convolution2D(32,3,3,border_mode='valid'))
     model.add(Activation('elu')) # out (16, 16)
     model.add(MaxPooling2D(pool_size=(2, 2))) # output (8, 8)
     model.add(Dropout(0.5))
     
-    model.add(Convolution2D(16,3,3,border_mode='valid'))
+    model.add(Convolution2D(32,3,3,border_mode='valid'))
     model.add(Activation('elu'))
     model.add(MaxPooling2D(pool_size=(2, 2))) # output (3, 3)
     model.add(Dropout(0.5))
 
     model.add(Flatten())
 
-    model.add(Dense(256))
+    model.add(Dense(512))
     model.add(Activation('elu'))
     model.add(Dropout(0.5))
 
