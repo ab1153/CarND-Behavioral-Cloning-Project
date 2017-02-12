@@ -16,7 +16,7 @@ import os
 model_name = 'model'
 data_path = './data/'
 half_batch_size = 32
-n_epochs = 10
+n_epochs = 30
 
 def generate(xs, ys, half_batch_size):
     size = xs.shape[0]
@@ -51,8 +51,6 @@ def pred_steering(name='model'):
     model.add(Convolution2D(12,3,3)) # out: 32, 12
     model.add(Activation('elu'))
     model.add(MaxPooling2D()) # out: 16, 6
-
-
 
     model.add(Flatten())
 
@@ -103,22 +101,12 @@ def main():
     xs = np.load('./xs.npy')
     ys = np.load('./ys.npy')
 
-    print(type(ys))
-
     xs, ys = shuffle(xs, ys)
-    x_train, x_valid, y_train, y_valid = train_test_split(xs, ys, test_size=0.1)
+    # x_train, x_valid, y_train, y_valid = train_test_split(xs, ys, test_size=0.1)
 
-    print (xs.shape, ys.shape)
     rest = xs.shape[0] % half_batch_size
     xs = xs[:-rest]
     ys = ys[:-rest]
-    print (xs.shape, ys.shape)
-    # print (x_train.shape, y_train.shape)
-    # rest = x_train.shape[0] % half_batch_size
-    # x_train = x_train[:-rest]
-    # y_train = y_train[:-rest]
-    # print (x_train.shape, y_train.shape)
-
 
     model = pred_steering()
     history = model.fit_generator(generate(xs, ys, half_batch_size),
